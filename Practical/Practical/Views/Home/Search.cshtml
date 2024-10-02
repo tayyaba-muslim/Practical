@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Practical.Models.Car>
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            No results found for your search.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4">
+                    <!-- 3 cards per row -->
+                    <div class="card mb-4">
+                        <img src="~/img/car.jpg" class="card-img-top" alt="Car Image">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Brand</h5>
+                            <p class="card-text">@item.Version?.Model?.ModelName</p> <!-- Null-checking -->
+                            <a href="#" class="btn btn-primary">@item.Version?.VersionName</a> <!-- Null-checking -->
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
