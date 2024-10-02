@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using Practical.Models;
@@ -9,7 +10,7 @@ namespace Practical.Controllers
 {
     public class HomeController : Controller
     {
-        
+
 
         private readonly PracticalContext db;
 
@@ -17,27 +18,34 @@ namespace Practical.Controllers
         {
             db = context;
         }
-        public IActionResult Index(string carName, int page = 1)
+
+        public IActionResult Index(string carName, int pageIndex = 1, int pageSize = 6)
         {
-            var cars = db.Cars.Include(c => c.Version).ThenInclude(v => v.Model);
+            var carsQuery = db.Cars.Include(c => c.Version).ThenInclude(v => v.Model).AsQueryable();
 
             // Apply filter if carName is provided
             if (!string.IsNullOrEmpty(carName))
             {
-                cars = cars.Where(c => c.Brand.Contains(carName)); // Adjust this based on how you want to filter
+                carsQuery = carsQuery.Where(c => c.Brand.Contains(carName));
+                ViewBag.CarName = carName; // Store the filter value for the view
             }
 
-            int pageSize = 6; // Number of items per page
-            var paginatedCars = cars.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var count = carsQuery.Count();
+            var items = carsQuery.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
 
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = (int)Math.Ceiling((double)cars.Count() / pageSize);
+            // Set pagination details in ViewBag
+            ViewBag.CurrentPage = pageIndex;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)count / pageSize);
 
-            return View(paginatedCars);
+            return View(items);
         }
 
 
-        public IActionResult Privacy()
+
+
+
+
+        public IActionResult CarDetails()
         {
             return View();
         }
@@ -48,18 +56,10 @@ namespace Practical.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpGet]
-        public IActionResult GetCars()
-        {
-            var data = db.Cars.Include(c => c.Version).ThenInclude(v => v.Model).ToList();
-
-            return View(data); 
-
-        }
+    
         public IActionResult Search(string query)
         {
-            // Implement search logic here
-            // e.g., filter cars based on the query
+
             var results = db.Cars.Where(c => c.Brand.Contains(query)).ToList();
             return View(results);
         }

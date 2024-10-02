@@ -2,10 +2,22 @@
 @{
     ViewData["Title"] = "Search Results";
 }
+<style>
+    .custom-card-shadow {
+        box-shadow: 0 4px 10px rgba(255, 255, 255, 0.5);
+        transition: box-shadow 0.3s, background-color 0.3s;
+    }
 
-<div class="container">
-    <h1>@ViewData["Title"]</h1>
+        .custom-card-shadow:hover {
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.7);
+            background-color: rgba(173, 216, 230, 0.7);
+        }
 
+</style>
+<div class="container" style="background-image: url('../img/images.jpg'); background-size: cover;">
+    <h1 style="text-align:center; color:white;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Search Results</h1>
+    <br />
+    <br />
     @if (!Model.Any())
     {
         <div class="alert alert-warning" role="alert">
@@ -19,12 +31,12 @@
             {
                 <div class="col-md-4">
                     <!-- 3 cards per row -->
-                    <div class="card mb-4">
+                    <div class="card mb-4 custom-card-shadow">
                         <img src="~/img/car.jpg" class="card-img-top" alt="Car Image">
                         <div class="card-body">
                             <h5 class="card-title">@item.Brand</h5>
-                            <p class="card-text">@item.Version?.Model?.ModelName</p> <!-- Null-checking -->
-                            <a href="#" class="btn btn-primary">@item.Version?.VersionName</a> <!-- Null-checking -->
+                            <p class="card-text">@item.Version?.Model?.ModelName</p> 
+                            <a href="#" class="btn btn-primary">@item.Version?.VersionName</a> 
                         </div>
                     </div>
                 </div>
